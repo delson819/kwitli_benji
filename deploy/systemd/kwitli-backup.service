@@ -1,0 +1,17 @@
+[Unit]
+Description=Encrypted off-server Kwitli PostgreSQL backup
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/kwitli/backup.env
+WorkingDirectory=/opt/kwitli
+Environment=RESTIC_CACHE_DIR=/var/cache/kwitli-restic
+CacheDirectory=kwitli-restic
+ExecStart=/usr/bin/bash /opt/kwitli/deploy/backup-postgres.sh
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true

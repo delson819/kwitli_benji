@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily Kwitli PostgreSQL backup
+
+[Timer]
+OnCalendar=*-*-* 02:30:00 UTC
+Persistent=true
+RandomizedDelaySec=15m
+Unit=kwitli-backup.service
+
+[Install]
+WantedBy=timers.target

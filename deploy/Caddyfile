@@ -1,0 +1,6 @@
+api.kwitli.app {
+	encode zstd gzip
+	reverse_proxy api:8000 {
+		header_up CF-Connecting-IP {http.request.remote.host}
+	}
+}

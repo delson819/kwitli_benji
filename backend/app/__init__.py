@@ -1,0 +1,1 @@
+"""KWITLI FastAPI application package."""

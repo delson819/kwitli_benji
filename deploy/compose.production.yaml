@@ -1,0 +1,109 @@
+services:
+  postgres:
+    image: postgres:18.3
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
+    environment:
+      POSTGRES_DB: ${KWITLI_POSTGRES_DB:?Set KWITLI_POSTGRES_DB in the production env file}
+      POSTGRES_USER: ${KWITLI_POSTGRES_USER:?Set KWITLI_POSTGRES_USER in the production env file}
+      POSTGRES_PASSWORD: ${KWITLI_POSTGRES_PASSWORD:?Set KWITLI_POSTGRES_PASSWORD in the production env file}
+      POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=C.UTF-8
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    stop_grace_period: 1m
+
+  api:
+    image: ${KWITLI_IMAGE:?Set a commit-SHA GHCR image in the production env file}
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
+    env_file:
+      - ${KWITLI_API_ENV_FILE:?Set KWITLI_API_ENV_FILE to the host-only application secrets file}
+    environment:
+      APP_ENV: ${KWITLI_APP_ENV:?Set KWITLI_APP_ENV explicitly for this deployment}
+      APP_DEBUG: "false"
+      API_HOST: 0.0.0.0
+      API_PORT: "8000"
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL in the production env file}
+      ALEMBIC_DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL in the production env file}
+      PUBLIC_API_URL: ${PUBLIC_API_URL:?Set the public HTTPS API URL}
+      TRUSTED_PROXY_IPS: ${TRUSTED_PROXY_IPS:?Set the exact Caddy address on the edge network}
+      SERVICE_AREA_MANIFEST_PATH: /run/kwitli/service-areas.json
+    expose:
+      - "8000"
+    volumes:
+      - uploads:/app/backend/uploads
+      - ${SERVICE_AREA_MANIFEST_FILE:?Set the reviewed manifest for this environment}:/run/kwitli/service-areas.json:ro
+    networks:
+      edge:
+        ipv4_address: 172.30.0.3
+      data: {}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=3).read()",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    stop_grace_period: 30s
+
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
+    ports:
+      - "80:80/tcp"
+      - "443:443/tcp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      edge:
+        ipv4_address: 172.30.0.2
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  uploads:
+  caddy_data:
+  caddy_config:
+
+networks:
+  edge:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+  data:
+    internal: true
