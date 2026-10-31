@@ -1,0 +1,19 @@
+{
+  "cli": {
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "preview-android": {
+      "distribution": "internal",
+      "developmentClient": false,
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_KWITLI_ENV": "staging",
+        "EXPO_PUBLIC_STAGING_API_URL": "https://api.kwitli.app",
+        "EXPO_PUBLIC_API_URL": "https://api.kwitli.app"
+      }
+    }
+  }
+}

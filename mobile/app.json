@@ -1,0 +1,86 @@
+{
+  "expo": {
+    "name": "Kwitli",
+    "slug": "kwitli",
+    "scheme": "kwitli",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/branding/kwitli-wordmark.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
+    "locales": {
+      "fr": "./locales/app-fr.json",
+      "es-CO": "./locales/app-es-CO.json"
+    },
+    "ios": {
+      "bundleIdentifier": "app.kwitli.mobile",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "app.kwitli.mobile",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "plugins": [
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Kwitli utilise vos photos pour publier l’image de vos plats.",
+          "cameraPermission": "Kwitli utilise l’appareil photo pour photographier vos plats.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": false,
+          "locationAlwaysPermission": false,
+          "locationWhenInUsePermission": "Kwitli utilise votre position pendant l’utilisation de l’app pour afficher les plats à proximité et définir le point de retrait.",
+          "isIosBackgroundLocationEnabled": false,
+          "isAndroidBackgroundLocationEnabled": false,
+          "isAndroidForegroundServiceEnabled": false
+        }
+      ],
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true,
+          "faceIDPermission": false
+        }
+      ],
+      "expo-web-browser",
+      [
+        "expo-audio",
+        {
+          "recordAudioAndroid": false
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "358bd0e1-1398-4742-b74c-a275aacabb50"
+      }
+    },
+    "owner": "tstar514"
+  }
+}

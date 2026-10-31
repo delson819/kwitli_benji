@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Kwitli",
+    "NSCameraUsageDescription": "Kwitli usa la cámara para tomar la foto de tus platos.",
+    "NSLocationWhenInUseUsageDescription": "Kwitli usa tu ubicación mientras usas la app para mostrarte platos cercanos y definir el punto de recogida.",
+    "NSPhotoLibraryUsageDescription": "Kwitli usa tus fotos para publicar la imagen de tus platos."
+  },
+  "android": {
+    "app_name": "Kwitli"
+  }
+}
